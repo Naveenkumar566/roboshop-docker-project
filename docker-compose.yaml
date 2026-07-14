@@ -95,4 +95,11 @@ networks:                                                          #this will cr
      driver: bridge
      name: roboshop
      external: false                                               #this says that we are creating network we dont need external network we are using the roboshop network
-                                                                   #if it is true we need to create an network outside and use it.   
+                                                                   #if it is true we need to create an network outside and use it.
+
+
+volumes:
+  mongodb: 
+  redis:
+  mysql:
+  rabbitmq:
