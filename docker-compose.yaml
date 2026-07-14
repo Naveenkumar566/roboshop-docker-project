@@ -1,0 +1,98 @@
+           
+services:
+  catalogue:
+    build: ./catalogue
+    image: devops/catalogue:1.0.0
+    container_name: catalogue
+    depends_on:
+      - mongodb
+  
+  user:
+    build: ./user 
+    image: devops/user:1.0.0
+    container_name: user
+    depends_on: 
+    - redis  
+    - mongodb 
+  
+  cart:
+    build: ./cart 
+    image: devops/cart:1.0.0
+    container_name: cart
+    depends_on: 
+    - redis
+    - catalogue
+ 
+  shipping:
+    build: ./shipping 
+    image: devops/shipping:1.0.0
+    container_name: shipping
+    depends_on: 
+    - mysql
+    - cart 
+
+  payment:
+    build: ./payment 
+    image: devops/payment:1.0.0
+    container_name: payment
+    environment:
+      CART_HOST: "CART"
+      CART_PORT: "8080"
+      USER_HOST: "USER"
+      USER_PORT: "8080"
+      AMQP_USER: "roboshop"
+      AMQP_PASS: "roboshop123"
+    depends_on: 
+    - rabbitmq
+    - cart
+    - user
+
+  frontend:
+    build: ./frontend
+    image: devops/frontend:1.0.0
+    container_name: frontend
+    ports:
+    - "80:80"
+    depends_on:
+       - catalogue
+       - user   
+       - cart
+       - shipping
+       - payment    
+    
+  mongodb:
+    build: .mongodb
+    image: devops/mongodb:1.0.0
+    container_name: mongodb
+    volumes:
+    - mongodb:/data/db 
+
+  redis:                                                           #we are creating any redis container, we are pulling it.
+    image: redis:7.0
+    container_name: redis
+    volumes:
+      - redis:/data
+   
+  mysql:
+     build: ./mysql
+     image: devops/mysql:1.0.0
+     container_name: mysql
+     volumes:
+       - mysql:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:3
+    environment:
+       RABBITMQ_DEFAULT_USER: roboshop
+       RABBITMQ_DEFAULT_PASS: roboshop123
+    container_name:  rabbitmq
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+
+
+networks:                                                          #this will create a network called roboshop which can be used in this project
+  default:
+     driver: bridge
+     name: roboshop
+     external: false                                               #this says that we are creating network we dont need external network we are using the roboshop network
+                                                                   #if it is true we need to create an network outside and use it.   
