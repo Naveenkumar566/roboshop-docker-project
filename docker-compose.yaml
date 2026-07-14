@@ -61,7 +61,7 @@ services:
        - payment    
     
   mongodb:
-    build: .mongodb
+    build: ./mongodb
     image: devops/mongodb:1.0.0
     container_name: mongodb
     volumes:
