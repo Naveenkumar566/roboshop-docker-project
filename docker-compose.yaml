@@ -27,6 +27,8 @@ services:
     build: ./shipping 
     image: devops/shipping:1.0.0
     container_name: shipping
+    ports:
+    - "8080:8080"
     depends_on: 
     - mysql
     - cart 
