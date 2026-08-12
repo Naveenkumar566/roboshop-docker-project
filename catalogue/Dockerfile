@@ -18,7 +18,7 @@ USER roboshop
 CMD ["server.js"]
 ENTRYPOINT [ "node" ]
 
-
+  
 # FROM node:20
 # WORKDIR /app
 # COPY package.json .
